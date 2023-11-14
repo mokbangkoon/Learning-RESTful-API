@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const port = 3000;
 app.use(express.json());
+
 const membersData = {
   totalNumberEmployees: 3,
   totalPages: 1,
@@ -157,7 +158,7 @@ const solutionsValidation = (
     if (!isValidLength(filterParams)) {
       return false;
     }
-    filterParams.forEach((el, idx) => {
+    paramsArr.forEach((el, idx) => {
       if (el.value != undefined) {
         if (idx != 2) {
           if (!isString(el.value)) {
@@ -363,6 +364,12 @@ app.put("/solutions/:id", (req, res) => {
     const description = req.body.description;
     const participants = req.body.participants;
     const progress = req.body.progress;
+    const generateResData = (str, data, el) => {
+      if (data != undefined) {
+        el[str] = data;
+        resData[str] = data;
+      }
+    };
     if (
       !solutionsValidation(
         projectName,
@@ -377,12 +384,6 @@ app.put("/solutions/:id", (req, res) => {
       });
       return;
     }
-    const generateResData = (str, data, el) => {
-      if (data != undefined) {
-        el[str] = data;
-        resData[str] = data;
-      }
-    };
     solutionsData.projects.forEach((el) => {
       if (String(el.id) === id) {
         generateResData("projectName", projectName, el);
