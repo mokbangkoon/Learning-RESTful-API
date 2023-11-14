@@ -71,8 +71,32 @@ const solutionsData = {
 
 const isString = (data) => (typeof data === "string" ? true : false);
 const isNumber = (data) => (typeof data === "number" ? true : false);
+const isValidLength = (data) => {
+  let validState = true;
+  data.forEach((el) => {
+    if (el.key === "description") {
+      if (String(el.value).length > 80) {
+        validState = false;
+        return;
+      }
+    } else if (String(el.value).length > 15) {
+      validState = false;
+      return;
+    }
+  });
+  return validState;
+};
+
 const membersValidation = (name, teamName, phoneNumber, method) => {
+  const paramsArr = [
+    { key: "name", value: name },
+    { key: "teamName", value: teamName },
+    { key: "phoneNumber", value: phoneNumber },
+  ];
   if (method === "POST") {
+    if (!isValidLength(paramsArr)) {
+      return false;
+    }
     if (isString(name) && isString(teamName) && isString(phoneNumber)) {
       return true;
     } else {
@@ -80,11 +104,20 @@ const membersValidation = (name, teamName, phoneNumber, method) => {
     }
   }
   if (method === "PUT") {
-    if (isString(name) || isString(teamName) || isString(phoneNumber)) {
-      return true;
-    } else {
+    let filterParams = [];
+    let validState = true;
+    filterParams = paramsArr.filter((el) => el.value != undefined);
+    if (!isValidLength(filterParams)) {
       return false;
     }
+    filterParams.forEach((el) => {
+      if (!isString(el.value)) {
+        validState = false;
+        return;
+      }
+    });
+
+    return validState;
   }
 };
 
@@ -95,7 +128,17 @@ const solutionsValidation = (
   progress,
   method
 ) => {
+  const paramsArr = [
+    { key: "projectName", value: projectName },
+    { key: "description", value: description },
+    { key: "participants", value: participants },
+    { key: "progress", value: progress },
+  ];
   if (method === "POST") {
+    if (!isValidLength(paramsArr)) {
+      return false;
+    }
+
     if (
       isString(projectName) &&
       isString(description) &&
@@ -108,16 +151,28 @@ const solutionsValidation = (
     }
   }
   if (method === "PUT") {
-    if (
-      isString(projectName) ||
-      isString(description) ||
-      isString(progress) ||
-      isNumber(participants)
-    ) {
-      return true;
-    } else {
+    let filterParams = [];
+    let validState = true;
+    filterParams = paramsArr.filter((el) => el.value != undefined);
+    if (!isValidLength(filterParams)) {
       return false;
     }
+    filterParams.forEach((el, idx) => {
+      if (el.value != undefined) {
+        if (idx != 2) {
+          if (!isString(el.value)) {
+            validState = false;
+            return false;
+          }
+        } else {
+          if (!isNumber(el.value)) {
+            validState = false;
+            return false;
+          }
+        }
+      }
+    });
+    return validState;
   }
 };
 
@@ -196,7 +251,7 @@ app.post("/members", (req, res) => {
     const phoneNumber = req.body.phoneNumber ?? "";
     if (!membersValidation(name, teamName, phoneNumber, "POST")) {
       res.status(400).json({
-        message: "요청 타입을 다시 확인해주세요.",
+        message: "요청 타입 또는 파라미터 길이를 다시 확인해주세요.",
       });
       return;
     }
@@ -243,7 +298,7 @@ app.post("/solutions", (req, res) => {
       )
     ) {
       res.status(400).json({
-        message: "요청 타입을 다시 확인해주세요.",
+        message: "요청 타입 또는 파라미터 길이를 다시 확인해주세요",
       });
       return;
     }
@@ -275,7 +330,7 @@ app.put("/members/:id", (req, res) => {
     const phoneNumber = req.body.phoneNumber;
     if (!membersValidation(name, teamName, phoneNumber, "PUT")) {
       res.status(400).json({
-        message: "요청 타입을 다시 확인해주세요.",
+        message: "요청 타입 또는 파라미터 길이를 다시 확인해주세요",
       });
       return;
     }
@@ -318,7 +373,7 @@ app.put("/solutions/:id", (req, res) => {
       )
     ) {
       res.status(400).json({
-        message: "요청 타입을 다시 확인해주세요.",
+        message: "요청 타입 또는 파라미터 길이를 다시 확인해주세요",
       });
       return;
     }
