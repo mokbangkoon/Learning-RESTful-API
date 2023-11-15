@@ -202,15 +202,22 @@ app.get("/members", (req, res) => {
 });
 
 app.get("/members/:id", (req, res) => {
+  let selectMember;
+  let validSelectMember = false;
   membersData.companyMember.forEach((el) => {
     if (String(el.identificationNumber) === req.params.id) {
-      res.json(el);
+      validSelectMember = true;
+      selectMember = el;
       return;
     }
   });
-  res.status(404).json({
-    message: "해당 직원은 없습니다.",
-  });
+  if (validSelectMember) {
+    res.json(selectMember);
+  } else {
+    res.status(404).json({
+      message: "해당 직원은 없습니다.",
+    });
+  }
 });
 
 app.get("/solutions", (req, res) => {
@@ -234,15 +241,21 @@ app.get("/solutions", (req, res) => {
 });
 
 app.get("/solutions/:id", (req, res) => {
+  let selectSolution;
+  let validSelectSolution = false;
   solutionsData.projects.forEach((el) => {
     if (String(el.id) === req.params.id) {
-      res.json(el);
-      return;
+      validSelectSolution = true;
+      selectSolution = el;
     }
   });
-  res.status(404).json({
-    message: "해당 솔루션은 존재하지 않습니다.",
-  });
+  if (validSelectSolution) {
+    res.json(selectSolution);
+  } else {
+    res.status(404).json({
+      message: "해당 솔루션은 존재하지 않습니다.",
+    });
+  }
 });
 
 app.post("/members", (req, res) => {
