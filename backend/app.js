@@ -1,7 +1,14 @@
 const express = require("express");
 const app = express();
+const cors = require("cors");
 const port = 3000;
 app.use(express.json());
+app.use(
+  cors({
+    origin: "http://localhost:8080",
+    credentials: true,
+  })
+);
 
 const membersData = {
   totalNumberEmployees: 3,
@@ -269,9 +276,10 @@ app.post("/members", (req, res) => {
       });
       return;
     }
+    console.log(membersData.companyMember);
     const identificationNumber =
       membersData.companyMember[membersData.companyMember.length - 1]
-        .identificationNumber;
+        ?.identificationNumber ?? 0;
     membersData.totalNumberEmployees += 1;
     membersData.companyMember.push({
       identificationNumber: identificationNumber + 1,
