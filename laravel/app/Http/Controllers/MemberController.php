@@ -67,7 +67,7 @@ class MemberController extends Controller
         }
 
         $member->update($request->all());
-        return response()->json(['message' => '수정 완료', 'identificationNumber' => $member->id]);
+        return response()->json(['message' => '수정 완료', 'identificationNumber' => $member->identificationNumber]);
     }
 
     public function deleteMember($id)

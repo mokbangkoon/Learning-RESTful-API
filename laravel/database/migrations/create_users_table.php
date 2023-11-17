@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->integer('identificationNumber')-> autoIncrement();
-            $table->string('name',15)->unique();
-            $table->string('teamName',15)->unique();
+            $table->string('name',15);
+            $table->string('teamName',15);
             $table->string('phoneNumber',15)->nullable();
         });
     }
